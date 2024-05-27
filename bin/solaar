@@ -49,8 +49,12 @@ def init_paths():
             break
 
 
-if __name__ == "__main__":
+def main():
     init_paths()
     import solaar.gtk
 
     solaar.gtk.main()
+
+
+if __name__ == "__main__":
+    main()
