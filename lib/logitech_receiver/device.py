@@ -296,9 +296,9 @@ class Device:
     @property
     def led_effects(self):
         if not self._led_effects and self.online and self.protocol >= 2.0:
-            if hidpp20_constants.FEATURE.COLOR_LED_EFFECTS in self.features:
+            if hidpp20_constants.Feature.COLOR_LED_EFFECTS in self.features:
                 self._led_effects = hidpp20.LEDEffectsInfo(self)
-            elif hidpp20_constants.FEATURE.RGB_EFFECTS in self.features:
+            elif hidpp20_constants.Feature.RGB_EFFECTS in self.features:
                 self._led_effects = hidpp20.RGBEffectsInfo(self)
         return self._led_effects
 
@@ -436,7 +436,7 @@ class Device:
                     was_active is None
                     or not was_active
                     or push
-                    and (not self.features or hidpp20_constants.FEATURE.WIRELESS_DEVICE_STATUS not in self.features)
+                    and (not self.features or hidpp20_constants.Feature.WIRELESS_DEVICE_STATUS not in self.features)
                 ):
                     if logger.isEnabledFor(logging.INFO):
                         logger.info("%s pushing device settings %s", self, self.settings)

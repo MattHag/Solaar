@@ -20,8 +20,8 @@ import yaml
 from logitech_receiver import common
 from logitech_receiver import exceptions
 from logitech_receiver import hidpp20
-from logitech_receiver import hidpp20_constants
 from logitech_receiver import special_keys
+from logitech_receiver.hidpp20_constants import Feature
 
 from . import hidpp
 
@@ -54,7 +54,7 @@ def test_FeaturesArray_check(device, expected_result, expected_count):
 
     assert result == expected_result
     assert result2 == expected_result
-    assert (hidpp20_constants.FEATURE.ROOT in featuresarray) == expected_result
+    assert (Feature.ROOT in featuresarray) == expected_result
     assert len(featuresarray) == expected_count
     assert bool(featuresarray) == expected_result
 
@@ -63,7 +63,7 @@ def test_FeaturesArray_check(device, expected_result, expected_count):
     "device, expected0, expected1, expected2, expected5, expected5v",
     [
         (device_zerofeatures, None, None, None, None, None),
-        (device_standard, 0x0000, 0x0001, 0x0020, hidpp20_constants.FEATURE.REPROG_CONTROLS_V4, 3),
+        (device_standard, 0x0000, 0x0001, 0x0020, Feature.REPROG_CONTROLS_V4, 3),
     ],
 )
 def test_FeaturesArray_get_feature(device, expected0, expected1, expected2, expected5, expected5v):
@@ -75,7 +75,7 @@ def test_FeaturesArray_get_feature(device, expected0, expected1, expected2, expe
     result2 = featuresarray.get_feature(2)
     result5 = featuresarray.get_feature(5)
     result2r = featuresarray.get_feature(2)
-    result5v = featuresarray.get_feature_version(hidpp20_constants.FEATURE.REPROG_CONTROLS_V4)
+    result5v = featuresarray.get_feature_version(Feature.REPROG_CONTROLS_V4)
 
     assert result0 == expected0
     assert result1 == expected1
@@ -92,15 +92,15 @@ def test_FeaturesArray_get_feature(device, expected0, expected1, expected2, expe
         (
             device_standard,
             [
-                (hidpp20_constants.FEATURE.ROOT, 0),
-                (hidpp20_constants.FEATURE.FEATURE_SET, 1),
-                (hidpp20_constants.FEATURE.CONFIG_CHANGE, 2),
-                (hidpp20_constants.FEATURE.DEVICE_FW_VERSION, 3),
+                (Feature.ROOT, 0),
+                (Feature.FEATURE_SET, 1),
+                (Feature.CONFIG_CHANGE, 2),
+                (Feature.DEVICE_FW_VERSION, 3),
                 (common.NamedInt(256, "unknown:0100"), 4),
-                (hidpp20_constants.FEATURE.REPROG_CONTROLS_V4, 5),
+                (Feature.REPROG_CONTROLS_V4, 5),
                 (None, 6),
                 (None, 7),
-                (hidpp20_constants.FEATURE.BATTERY_STATUS, 8),
+                (Feature.BATTERY_STATUS, 8),
             ],
         ),
     ],
@@ -116,12 +116,12 @@ def test_FeaturesArray_enumerate(device, expected_result):
 def test_FeaturesArray_setitem():
     featuresarray = hidpp20.FeaturesArray(device_standard)
 
-    featuresarray[hidpp20_constants.FEATURE.ROOT] = 3
-    featuresarray[hidpp20_constants.FEATURE.FEATURE_SET] = 5
-    featuresarray[hidpp20_constants.FEATURE.FEATURE_SET] = 4
+    featuresarray[Feature.ROOT] = 3
+    featuresarray[Feature.FEATURE_SET] = 5
+    featuresarray[Feature.FEATURE_SET] = 4
 
-    assert featuresarray[hidpp20_constants.FEATURE.FEATURE_SET] == 4
-    assert featuresarray.inverse[4] == hidpp20_constants.FEATURE.FEATURE_SET
+    assert featuresarray[Feature.FEATURE_SET] == 4
+    assert featuresarray.inverse[4] == Feature.FEATURE_SET
 
 
 def test_FeaturesArray_delitem():
@@ -139,10 +139,10 @@ def test_FeaturesArray_getitem(device, expected0, expected1, expected2, expected
     featuresarray = hidpp20.FeaturesArray(device)
     device.features = featuresarray
 
-    result_get0 = featuresarray[hidpp20_constants.FEATURE.ROOT]
-    result_get1 = featuresarray[hidpp20_constants.FEATURE.REPROG_CONTROLS_V4]
-    result_get2 = featuresarray[hidpp20_constants.FEATURE.GKEY]
-    result_1v = featuresarray.get_feature_version(hidpp20_constants.FEATURE.REPROG_CONTROLS_V4)
+    result_get0 = featuresarray[Feature.ROOT]
+    result_get1 = featuresarray[Feature.REPROG_CONTROLS_V4]
+    result_get2 = featuresarray[Feature.GKEY]
+    result_1v = featuresarray.get_feature_version(Feature.REPROG_CONTROLS_V4)
 
     assert result_get0 == expected0
     assert result_get1 == expected1
@@ -218,7 +218,7 @@ def test_ReprogrammableKeyV4_key(device, index, cid, tid, flags, pos, group, gma
 )
 # these fields need access all the key data, so start by setting up a device and its key data
 def test_ReprogrammableKeyV4_query(responses, index, mapped_to, remappable_to, mapping_flags):
-    device = hidpp.Device("KEY", responses=responses, feature=hidpp20_constants.FEATURE.REPROG_CONTROLS_V4, offset=5)
+    device = hidpp.Device("KEY", responses=responses, feature=Feature.REPROG_CONTROLS_V4, offset=5)
     device._keys = _hidpp20.get_keys(device)
 
     key = device.keys[index]
@@ -239,7 +239,7 @@ def test_ReprogrammableKeyV4_query(responses, index, mapped_to, remappable_to, m
 )
 def test_ReprogrammableKeyV4_set(responses, index, diverted, persistently_diverted, rawXY_reporting, remap, sets, mocker):
     responses += [hidpp.Response(r, 0x530, r) for r in sets]
-    device = hidpp.Device("KEY", responses=responses, feature=hidpp20_constants.FEATURE.REPROG_CONTROLS_V4, offset=5)
+    device = hidpp.Device("KEY", responses=responses, feature=Feature.REPROG_CONTROLS_V4, offset=5)
     device._keys = _hidpp20.get_keys(device)
     device._keys._ensure_all_keys_queried()  # do this now so that the last requests are sets
     spy_request = mocker.spy(device, "request")
@@ -291,7 +291,7 @@ def test_RemappableAction(r, index, cid, actionId, remapped, mask, status, actio
         responses = r + [hidpp.Response("040000", 0x0000, "1C00"), hidpp.Response("00", 0x450, f"{cid:04X}" + "FF")]
     else:
         responses = r + [hidpp.Response("040000", 0x0000, "1C00"), hidpp.Response("00", 0x440, f"{cid:04X}" + "FF" + remap)]
-    device = hidpp.Device("KEY", responses=responses, feature=hidpp20_constants.FEATURE.REPROG_CONTROLS_V4, offset=5)
+    device = hidpp.Device("KEY", responses=responses, feature=Feature.REPROG_CONTROLS_V4, offset=5)
     key = hidpp20.PersistentRemappableAction(device, index, cid, actionId, remapped, mask, status)
     spy_request = mocker.spy(device, "request")
 
@@ -378,7 +378,7 @@ def test_KeysArrayV4_index(key, index):
     assert result == index
 
 
-device_key = hidpp.Device("KEY", responses=hidpp.responses_key, feature=hidpp20_constants.FEATURE.REPROG_CONTROLS_V4, offset=5)
+device_key = hidpp.Device("KEY", responses=hidpp.responses_key, feature=Feature.REPROG_CONTROLS_V4, offset=5)
 
 
 @pytest.mark.parametrize(
@@ -440,7 +440,7 @@ def test_KeysArrayPersistent_index_error(device, index):
     ],
 )
 def test_KeysArrayPersistent_key(responses, key, index, mapped_to, capabilities):
-    device = hidpp.Device("REMAP", responses=responses, feature=hidpp20_constants.FEATURE.PERSISTENT_REMAPPABLE_ACTION)
+    device = hidpp.Device("REMAP", responses=responses, feature=Feature.PERSISTENT_REMAPPABLE_ACTION)
     device._remap_keys = _hidpp20.get_remap_keys(device)
     device._remap_keys._ensure_all_keys_queried()
 
@@ -500,7 +500,7 @@ def test_Gesture(device, low, high, next_index, next_diversion_index, name, cbe,
     ],
 )
 def test_Gesture_set(responses, gest, enabled, diverted, set_result, unset_result, divert_result, undivert_result):
-    device = hidpp.Device("GESTURE", responses=responses, feature=hidpp20_constants.FEATURE.GESTURE_2)
+    device = hidpp.Device("GESTURE", responses=responses, feature=Feature.GESTURE_2)
     gestures = _hidpp20.get_gestures(device)
 
     gesture = gestures.gesture(gest)
@@ -520,7 +520,7 @@ def test_Gesture_set(responses, gest, enabled, diverted, set_result, unset_resul
     ],
 )
 def test_Param(responses, prm, id, index, size, value, default_value, write1, write2):
-    device = hidpp.Device("GESTURE", responses=responses, feature=hidpp20_constants.FEATURE.GESTURE_2)
+    device = hidpp.Device("GESTURE", responses=responses, feature=Feature.GESTURE_2)
     gestures = _hidpp20.get_gestures(device)
 
     param = gestures.param(prm)
@@ -545,7 +545,7 @@ def test_Param(responses, prm, id, index, size, value, default_value, write1, wr
     ],
 )
 def test_Spec(responses, id, s, byte_count, value, string):
-    device = hidpp.Device("GESTURE", responses=responses, feature=hidpp20_constants.FEATURE.GESTURE_2)
+    device = hidpp.Device("GESTURE", responses=responses, feature=Feature.GESTURE_2)
     gestures = _hidpp20.get_gestures(device)
 
     spec = gestures.specs[id]
@@ -558,7 +558,7 @@ def test_Spec(responses, id, s, byte_count, value, string):
 
 
 def test_Gestures():
-    device = hidpp.Device("GESTURES", responses=hidpp.responses_gestures, feature=hidpp20_constants.FEATURE.GESTURE_2)
+    device = hidpp.Device("GESTURES", responses=hidpp.responses_gestures, feature=Feature.GESTURE_2)
     gestures = _hidpp20.get_gestures(device)
 
     assert gestures
@@ -588,7 +588,7 @@ responses_backlight = [
     hidpp.Response("0101FF00020003000400", 0x0410, "0101FF00020003000400"),
 ]
 
-device_backlight = hidpp.Device("BACKLIGHT", responses=responses_backlight, feature=hidpp20_constants.FEATURE.BACKLIGHT2)
+device_backlight = hidpp.Device("BACKLIGHT", responses=responses_backlight, feature=Feature.BACKLIGHT2)
 
 
 def test_Backlight():
@@ -642,8 +642,8 @@ def test_LEDEffectSetting(hex, ID, color, speed, period, intensity, ramp, form):
 @pytest.mark.parametrize(
     "feature, function, response, ID, capabilities, period",
     [
-        [hidpp20_constants.FEATURE.COLOR_LED_EFFECTS, 0x20, hidpp.Response("0102000300040005", 0x0420, "010200"), 3, 4, 5],
-        [hidpp20_constants.FEATURE.COLOR_LED_EFFECTS, 0x20, hidpp.Response("0102000700080009", 0x0420, "010200"), 7, 8, 9],
+        [Feature.COLOR_LED_EFFECTS, 0x20, hidpp.Response("0102000300040005", 0x0420, "010200"), 3, 4, 5],
+        [Feature.COLOR_LED_EFFECTS, 0x20, hidpp.Response("0102000700080009", 0x0420, "010200"), 7, 8, 9],
     ],
 )
 def test_LEDEffectInfo(feature, function, response, ID, capabilities, period):
@@ -661,8 +661,8 @@ def test_LEDEffectInfo(feature, function, response, ID, capabilities, period):
 @pytest.mark.parametrize(
     "feature, function, offset, effect_function, responses, index, location, count, id_1",
     [
-        [hidpp20_constants.FEATURE.COLOR_LED_EFFECTS, 0x10, 0, 0x20, hidpp.zone_responses_1, 0, 1, 2, 0xB],
-        [hidpp20_constants.FEATURE.RGB_EFFECTS, 0x00, 1, 0x00, hidpp.zone_responses_2, 0, 1, 2, 2],
+        [Feature.COLOR_LED_EFFECTS, 0x10, 0, 0x20, hidpp.zone_responses_1, 0, 1, 2, 0xB],
+        [Feature.RGB_EFFECTS, 0x00, 1, 0x00, hidpp.zone_responses_2, 0, 1, 2, 2],
     ],
 )
 def test_LEDZoneInfo(feature, function, offset, effect_function, responses, index, location, count, id_1):
@@ -686,8 +686,8 @@ def test_LEDZoneInfo(feature, function, offset, effect_function, responses, inde
     ],
 )
 def test_LEDZoneInfo_to_command(responses, setting, expected_command):
-    device = hidpp.Device(feature=hidpp20_constants.FEATURE.COLOR_LED_EFFECTS, responses=responses, offset=0x07)
-    zone = hidpp20.LEDZoneInfo(hidpp20_constants.FEATURE.COLOR_LED_EFFECTS, 0x10, 0, 0x20, device, 0)
+    device = hidpp.Device(feature=Feature.COLOR_LED_EFFECTS, responses=responses, offset=0x07)
+    zone = hidpp20.LEDZoneInfo(Feature.COLOR_LED_EFFECTS, 0x10, 0, 0x20, device, 0)
 
     command = zone.to_command(setting)
 
@@ -697,8 +697,8 @@ def test_LEDZoneInfo_to_command(responses, setting, expected_command):
 @pytest.mark.parametrize(
     "feature, cls, responses, readable, count, count_0",
     [
-        [hidpp20_constants.FEATURE.COLOR_LED_EFFECTS, hidpp20.LEDEffectsInfo, hidpp.effects_responses_1, 1, 1, 2],
-        [hidpp20_constants.FEATURE.RGB_EFFECTS, hidpp20.RGBEffectsInfo, hidpp.effects_responses_2, 1, 1, 2],
+        [Feature.COLOR_LED_EFFECTS, hidpp20.LEDEffectsInfo, hidpp.effects_responses_1, 1, 1, 2],
+        [Feature.RGB_EFFECTS, hidpp20.RGBEffectsInfo, hidpp.effects_responses_2, 1, 1, 2],
     ],
 )
 def test_LED_RGB_EffectsInfo(feature, cls, responses, readable, count, count_0):
@@ -721,7 +721,7 @@ def test_LED_RGB_EffectsInfo(feature, cls, responses, readable, count, count_0):
         ("80020454", 0x8, None, None, 0x02, 0x54, 0x04, None, None),
         ("80030454", 0x8, None, None, 0x03, 0x0454, None, None, None),
         ("900AFF01", 0x9, None, None, None, 0x0A, None, 0x01, None),
-        ("709090A0", 0x7, None, None, None, None, None, None, b"\x70\x90\x90\xA0"),
+        ("709090A0", 0x7, None, None, None, None, None, None, b"\x70\x90\x90\xa0"),
     ],
 )
 def test_button_bytes(hex, behavior, sector, address, typ, val, modifiers, data, byt):
@@ -826,7 +826,7 @@ def test_OnboardProfile_bytes(hex, name, sector, enabled, buttons, gbuttons, res
     ],
 )
 def test_OnboardProfiles_device(responses, name, count, buttons, gbuttons, sectors, size):
-    device = hidpp.Device(name, True, 4.5, responses=responses, feature=hidpp20_constants.FEATURE.ONBOARD_PROFILES, offset=0x9)
+    device = hidpp.Device(name, True, 4.5, responses=responses, feature=Feature.ONBOARD_PROFILES, offset=0x9)
     device._profiles = None
     profiles = _hidpp20.get_profiles(device)
 

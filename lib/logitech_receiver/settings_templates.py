@@ -39,7 +39,7 @@ logger = logging.getLogger(__name__)
 
 _hidpp20 = hidpp20.Hidpp20()
 _DK = hidpp10_constants.DEVICE_KIND
-_F = hidpp20_constants.FEATURE
+_F = hidpp20_constants.Feature
 
 _GG = hidpp20_constants.GESTURE
 _GP = hidpp20_constants.PARAM
@@ -1776,7 +1776,7 @@ SETTINGS = [
 ]
 
 
-def check_feature(device, sclass):
+def check_feature(device, sclass: settings.Settings):
     if sclass.feature not in device.features:
         return
     if sclass.min_version > device.features.get_feature_version(sclass.feature):

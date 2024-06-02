@@ -25,6 +25,7 @@ from . import common
 from . import hidpp20_constants
 from .common import NamedInt
 from .common import NamedInts
+from .hidpp20_constants import Feature
 
 logger = logging.getLogger(__name__)
 
@@ -627,7 +628,7 @@ class FeatureRW:
     default_write_fnid = 0x10
 
     def __init__(self, feature, read_fnid=0x00, write_fnid=0x10, prefix=b"", suffix=b"", read_prefix=b"", no_reply=False):
-        assert isinstance(feature, NamedInt)
+        assert isinstance(feature, Feature)
         self.feature = feature
         self.read_fnid = read_fnid
         self.write_fnid = write_fnid
@@ -1419,7 +1420,7 @@ class ActionSettingRW:
 
     def write(self, device, data_bytes):
         def handler(device, n):  # Called on notification events from the device
-            if n.sub_id < 0x40 and device.features.get_feature(n.sub_id) == hidpp20_constants.FEATURE.REPROG_CONTROLS_V4:
+            if n.sub_id < 0x40 and device.features.get_feature(n.sub_id) == hidpp20_constants.Feature.REPROG_CONTROLS_V4:
                 if n.address == 0x00:
                     cids = struct.unpack("!HHHH", n.data[:8])
                     if not self.pressed and int(self.key.key) in cids:  # trigger key pressed
@@ -1481,11 +1482,11 @@ class RawXYProcessing:
         self.keys = []  # the keys that can initiate processing
         self.initiating_key = None  # the key that did initiate processing
         self.active = False
-        self.feature_offset = device.features[hidpp20_constants.FEATURE.REPROG_CONTROLS_V4]
+        self.feature_offset = device.features[hidpp20_constants.Feature.REPROG_CONTROLS_V4]
         assert self.feature_offset is not False
 
     def handler(self, device, n):  # Called on notification events from the device
-        if n.sub_id < 0x40 and device.features.get_feature(n.sub_id) == hidpp20_constants.FEATURE.REPROG_CONTROLS_V4:
+        if n.sub_id < 0x40 and device.features.get_feature(n.sub_id) == hidpp20_constants.Feature.REPROG_CONTROLS_V4:
             if n.address == 0x00:
                 cids = struct.unpack("!HHHH", n.data[:8])
                 ## generalize to list of keys
@@ -1553,7 +1554,7 @@ class RawXYProcessing:
 
 
 def apply_all_settings(device):
-    if device.features and hidpp20_constants.FEATURE.HIRES_WHEEL in device.features:
+    if device.features and hidpp20_constants.Feature.HIRES_WHEEL in device.features:
         time.sleep(0.2)  # delay to try to get out of race condition with Linux HID++ driver
     persister = getattr(device, "persister", None)
     sensitives = persister.get("_sensitive", {}) if persister else {}

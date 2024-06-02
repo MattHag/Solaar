@@ -18,7 +18,7 @@ from dataclasses import dataclass
 from gi.repository import Gtk
 from logitech_receiver import diversion as _DIV
 from logitech_receiver.diversion import Key as _Key
-from logitech_receiver.hidpp20 import FEATURE as _ALL_FEATURES
+from logitech_receiver.hidpp20 import Feature as _ALL_FEATURES
 from logitech_receiver.special_keys import CONTROL as _CONTROL
 
 from solaar.i18n import _
