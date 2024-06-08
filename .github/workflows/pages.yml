@@ -4,9 +4,10 @@ on:
   push:
     branches:
       - master
+      - 'docs**'
     paths:
       - 'docs/**'
-      - 'src/**'
+      - 'lib/**'
       - '.github/workflows/**'
 
   workflow_dispatch:
@@ -53,9 +54,9 @@ jobs:
       - name: Generate Python documentation
         run: |
           cd lib
-          sphinx-quickstart -q -p "Your Project" -a "Your Name" -v "0.1" -r "0.1" --ext-autodoc --ext-viewcode
+          sphinx-quickstart -q -p "Solaar" -a "Solaar developers" -v "0.1" -r "0.1" --ext-autodoc --ext-viewcode
           make html
-        working-directory: ./lib
+        working-directory: './lib'
 
       - name: Move Python docs to Jekyll site
         run: |
