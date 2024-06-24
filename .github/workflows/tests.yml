@@ -29,7 +29,13 @@ jobs:
 
     - name: Run tests on Ubuntu
       run: |
-        make test
+        pytest --cov=lib --cov-report=xml --cov-report=html
+
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-report
+        path: htmlcov
 
   macos-tests:
     runs-on: macos-latest
