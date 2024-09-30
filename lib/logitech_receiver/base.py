@@ -53,7 +53,7 @@ else:
 logger = logging.getLogger(__name__)
 
 
-_SHORT_MESSAGE_SIZE = 7
+SHORT_MESSAGE_SIZE = 7
 _LONG_MESSAGE_SIZE = 20
 _MEDIUM_MESSAGE_SIZE = 15
 _MAX_READ_SIZE = 32
@@ -254,7 +254,7 @@ def write(handle, devnumber, data, long_message=False):
     assert data is not None
     assert isinstance(data, bytes), (repr(data), type(data))
 
-    if long_message or len(data) > _SHORT_MESSAGE_SIZE - 2 or data[:1] == b"\x82":
+    if long_message or len(data) > SHORT_MESSAGE_SIZE - 2 or data[:1] == b"\x82":
         wdata = struct.pack("!BB18s", HIDPP_LONG_MESSAGE_ID, devnumber, data)
     else:
         wdata = struct.pack("!BB5s", HIDPP_SHORT_MESSAGE_ID, devnumber, data)
@@ -303,7 +303,7 @@ def is_relevant_message(data: bytes) -> bool:
 
     # mapping from report_id to message length
     report_lengths = {
-        HIDPP_SHORT_MESSAGE_ID: _SHORT_MESSAGE_SIZE,
+        HIDPP_SHORT_MESSAGE_ID: SHORT_MESSAGE_SIZE,
         HIDPP_LONG_MESSAGE_ID: _LONG_MESSAGE_SIZE,
         DJ_MESSAGE_ID: _MEDIUM_MESSAGE_SIZE,
         0x21: _MAX_READ_SIZE,

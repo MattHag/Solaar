@@ -203,6 +203,7 @@ class _DeviceMonitor(Thread):
     def __init__(self, device_callback, polling_delay=5.0):
         self.device_callback = device_callback
         self.polling_delay = polling_delay
+        self.prev_devices = None
         # daemon threads are automatically killed when main thread exits
         super().__init__(daemon=True)
 
@@ -452,7 +453,6 @@ def read(device_handle, bytes_count, timeout_ms=None):
 
     if bytes_read < 0:
         raise HIDError(_hidapi.hid_error(device_handle))
-        return None
 
     return data.raw[:bytes_read]
 

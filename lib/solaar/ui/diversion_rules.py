@@ -1569,7 +1569,7 @@ class _SettingWithValueUI:
 
         def item(k):
             lbl = labels.get(k, None)
-            return (k, lbl[0] if lbl and isinstance(lbl, tuple) and lbl[0] else str(k))
+            return k, lbl[0] if lbl and isinstance(lbl, tuple) and lbl[0] else str(k)
 
         with self.ignore_changes():
             self.key_field.set_all_values(sorted(map(item, keys), key=lambda k: k[1]))

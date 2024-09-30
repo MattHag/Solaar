@@ -253,7 +253,7 @@ _D(
     wpid=("1006", "100D", "0612"),
     registers=(Reg.BATTERY_CHARGE,),
 )
-_D("MX Air", codename="MX Air", protocol=1.0, kind=DEVICE_KIND.mouse, wpid=("1007", "100E"), registers=(Reg.BATTERY_CHARGE))
+_D("MX Air", codename="MX Air", protocol=1.0, kind=DEVICE_KIND.mouse, wpid=("1007", "100E"), registers=Reg.BATTERY_CHARGE)
 _D(
     "MX Revolution",
     codename="MX Revolution",

@@ -217,7 +217,7 @@ def _create_success_page(assistant, device):
     assistant.commit()
 
 
-def _create_failure_page(assistant, error):
+def _create_failure_page(assistant, error) -> None:
     header = _("Pairing failed") + ": " + _(str(error)) + "."
     if "timeout" in str(error):
         text = _("Make sure your device is within range, and has a decent battery charge.")
@@ -232,7 +232,7 @@ def _create_failure_page(assistant, error):
     assistant.commit()
 
 
-def _create_page(assistant, kind, header=None, icon_name=None, text=None):
+def _create_page(assistant, kind, header=None, icon_name=None, text=None) -> Gtk.VBox:
     p = Gtk.VBox(homogeneous=False, spacing=8)
     assistant.append_page(p)
     assistant.set_page_type(p, kind)

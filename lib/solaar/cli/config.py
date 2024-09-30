@@ -236,7 +236,7 @@ def set(dev, setting, args, save):
     elif setting.kind == settings.KIND.map_choice:
         if args.extra_subkey is None:
             _print_setting_keyed(setting, args.value_key)
-            return (None, None, None)
+            return None, None, None
         key = args.value_key
         ikey = to_int(key)
         k = next((k for k in setting.choices.keys() if key == k), None)
@@ -254,7 +254,7 @@ def set(dev, setting, args, save):
     elif setting.kind == settings.KIND.multiple_toggle:
         if args.extra_subkey is None:
             _print_setting_keyed(setting, args.value_key)
-            return (None, None, None)
+            return None, None, None
         key = args.value_key
         all_keys = getattr(setting, "choices_universe", None)
         ikey = all_keys[int(key) if key.isdigit() else key] if isinstance(all_keys, NamedInts) else to_int(key)

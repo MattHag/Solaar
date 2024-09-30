@@ -453,7 +453,7 @@ def get_indexed_string(device_handle, index):
     assert device_handle
     stat = os.fstat(device_handle)
     try:
-        dev = pyudev.Device.from_device_number(pyudev.Context(), "char", stat.st_rdev)
+        dev = pyudev.Devices.from_device_number(pyudev.Context(), "char", stat.st_rdev)
     except (pyudev.DeviceNotFoundError, ValueError):
         return None
 

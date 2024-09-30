@@ -113,9 +113,17 @@ except Exception:
 # Globals
 xtest_available = True  # Xtest might be available
 xdisplay = None
+
+
 Xkbdisplay = None  # xkb might be available
+X11Lib = None
+
 modifier_keycodes = []
 XkbUseCoreKbd = 0x100
+NET_ACTIVE_WINDOW = None
+NET_WM_PID = None
+WM_CLASS = None
+
 
 udevice = None
 

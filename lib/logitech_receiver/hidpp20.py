@@ -673,9 +673,9 @@ class Gesture:
         if index is not None:
             offset = index >> 3  # 8 gestures per byte
             mask = 0x1 << (index % 8)
-            return (offset, mask)
+            return offset, mask
         else:
-            return (None, None)
+            return None, None
 
     def enable_offset_mask(gesture):
         return gesture._offset_mask(gesture.index)
@@ -1443,7 +1443,7 @@ class Hidpp20:
                 if transport_bits & flag:
                     tid_map[transport] = modelId[offset : offset + 2].hex().upper()
                     offset = offset + 2
-            return (unitId.hex().upper(), modelId.hex().upper(), tid_map)
+            return unitId.hex().upper(), modelId.hex().upper(), tid_map
 
     def get_kind(self, device: Device):
         """Reads a device's type.

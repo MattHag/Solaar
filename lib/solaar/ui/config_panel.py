@@ -87,8 +87,9 @@ class Scale(Gtk.Scale):
 
 
 class Control:
-    def __init__(**kwargs):
-        pass
+    def __init__(self, **kwargs):
+        self.sbox = None
+        self.delegate = None
 
     def init(self, sbox, delegate):
         self.sbox = sbox
