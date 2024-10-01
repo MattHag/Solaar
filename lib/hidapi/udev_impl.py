@@ -78,10 +78,13 @@ def exit():
     return True
 
 
-# The filterfn is used to determine whether this is a device of interest to Solaar.
-# It is given the bus id, vendor id, and product id and returns a dictionary
-# with the required hid_driver and usb_interface and whether this is a receiver or device.
-def _match(action, device, filter_func: typing.Callable[[int, int, int, bool, bool], dict[str, typing.Any]]):
+def _match(action: str, device, filter_func: typing.Callable[[int, int, int, bool, bool], dict[str, typing.Any]]):
+    """
+
+    The filter_func is used to determine whether this is a device of
+    interest to Solaar. It is given the bus id, vendor id, and product
+    id and returns a dictionary with the required hid_driver and
+    usb_interface and whether this is a receiver or device."""
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug(f"Dbus event {action} {device}")
     hid_device = device.find_parent("hid")
@@ -201,7 +204,7 @@ def find_paired_node(receiver_path: str, index: int, timeout: int):
     return None
 
 
-def find_paired_node_wpid(receiver_path, index):
+def find_paired_node_wpid(receiver_path: str, index: int):
     """Find the node of a device paired with a receiver, get wpid from udev"""
     context = pyudev.Context()
     receiver_phys = pyudev.Devices.from_device_file(context, receiver_path).find_parent("hid").get("HID_PHYS")
@@ -222,7 +225,7 @@ def find_paired_node_wpid(receiver_path, index):
     return None
 
 
-def monitor_glib(glib: GLib, callback, filterfn):
+def monitor_glib(glib: GLib, callback, filter_func):
     """Monitor GLib.
 
     Parameters
@@ -234,14 +237,14 @@ def monitor_glib(glib: GLib, callback, filterfn):
     m = pyudev.Monitor.from_netlink(c)
     m.filter_by(subsystem="hidraw")
 
-    def _process_udev_event(monitor, condition, cb, filterfn):
+    def _process_udev_event(monitor, condition, cb, filter_func):
         if condition == glib.IO_IN:
             event = monitor.receive_device()
             if event:
                 action, device = event
                 # print ("***", action, device)
                 if action == ACTION_ADD:
-                    d_info = _match(action, device, filterfn)
+                    d_info = _match(action, device, filter_func)
                     if d_info:
                         glib.idle_add(cb, action, d_info)
                 elif action == ACTION_REMOVE:
@@ -251,13 +254,13 @@ def monitor_glib(glib: GLib, callback, filterfn):
 
     try:
         # io_add_watch_full may not be available...
-        glib.io_add_watch_full(m, glib.PRIORITY_LOW, glib.IO_IN, _process_udev_event, callback, filterfn)
+        glib.io_add_watch_full(m, glib.PRIORITY_LOW, glib.IO_IN, _process_udev_event, callback, filter_func)
     except AttributeError:
         try:
             # and the priority parameter appeared later in the API
-            glib.io_add_watch(m, glib.PRIORITY_LOW, glib.IO_IN, _process_udev_event, callback, filterfn)
+            glib.io_add_watch(m, glib.PRIORITY_LOW, glib.IO_IN, _process_udev_event, callback, filter_func)
         except Exception:
-            glib.io_add_watch(m, glib.IO_IN, _process_udev_event, callback, filterfn)
+            glib.io_add_watch(m, glib.IO_IN, _process_udev_event, callback, filter_func)
 
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug("Starting dbus monitoring")
@@ -321,7 +324,7 @@ def open_path(device_path):
                 raise
 
 
-def close(device_handle):
+def close(device_handle) -> None:
     """Close a HID device.
 
     :param device_handle: a device handle returned by open() or open_path().
