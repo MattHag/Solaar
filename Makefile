@@ -28,6 +28,10 @@ install_brew:
 	brew update
 	brew install hidapi gtk+3 pygobject3 gobject-introspection
 
+	@echo "Setting up DYLD_LIBRARY_PATH"
+	@echo "export DYLD_LIBRARY_PATH=$(shell brew --prefix hidapi)/lib:$$DYLD_LIBRARY_PATH" >> ~/.bash_profile || ~/.zshrc
+	@source ~/.bash_profile || ~/.zshrc
+
 install_pip:
 	@echo "Installing Solaar via pip"
 	python -m pip install --upgrade pip
