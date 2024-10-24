@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import binascii
 import dataclasses
+import enum
 import typing
 
 from enum import IntEnum
@@ -508,7 +509,7 @@ class NamedInts:
         return isinstance(other, self.__class__) and self._values == other._values
 
 
-def flag_names(enum_class: Iterable, value: int) -> Generator[str]:
+def flag_names(enum_class: Iterable[enum.Enum], value: int) -> Generator[str]:
     """Extracts single bit flags from a (binary) number.
 
     Parameters

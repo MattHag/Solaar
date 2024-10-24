@@ -172,7 +172,7 @@ class Receiver:
             return False
 
         if enable:
-            set_flag_bits = hidpp10_constants.NOTIFICATION_FLAG.wireless | hidpp10_constants.NOTIFICATION_FLAG.software_present
+            set_flag_bits = hidpp10_constants.NotificationFlag.WIRELESS | hidpp10_constants.NotificationFlag.SOFTWARE_PRESENT
         else:
             set_flag_bits = 0
         ok = _hidpp10.set_notification_flags(self, set_flag_bits)
@@ -181,7 +181,8 @@ class Receiver:
             return None
 
         flag_bits = _hidpp10.get_notification_flags(self)
-        flag_names = None if flag_bits is None else tuple(hidpp10_constants.NOTIFICATION_FLAG.flag_names(flag_bits))
+        names = tuple(common.flag_names(hidpp10_constants.NotificationFlag, flag_bits))
+        flag_names = None if flag_bits is None else names
         if logger.isEnabledFor(logging.INFO):
             logger.info("%s: receiver notifications %s => %s", self, "enabled" if enable else "disabled", flag_names)
         return flag_bits

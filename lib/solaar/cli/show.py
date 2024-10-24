@@ -55,7 +55,7 @@ def _print_receiver(receiver):
     notification_flags = _hidpp10.get_notification_flags(receiver)
     if notification_flags is not None:
         if notification_flags:
-            notification_names = hidpp10_constants.NOTIFICATION_FLAG.flag_names(notification_flags)
+            notification_names = common.flag_names(hidpp10_constants.NotificationFlag, notification_flags)
             print(f"  Notifications: {', '.join(notification_names)} (0x{notification_flags:06X})")
         else:
             print("  Notifications: (none)")
@@ -131,7 +131,7 @@ def _print_device(dev, num=None):
         notification_flags = _hidpp10.get_notification_flags(dev)
         if notification_flags is not None:
             if notification_flags:
-                notification_names = hidpp10_constants.NOTIFICATION_FLAG.flag_names(notification_flags)
+                notification_names = common.flag_names(hidpp10_constants.NotificationFlag, notification_flags)
                 print(f"     Notifications: {', '.join(notification_names)} (0x{notification_flags:06X}).")
             else:
                 print("     Notifications: (none).")
@@ -150,7 +150,7 @@ def _print_device(dev, num=None):
         for feature, index in dev.features.enumerate():
             flags = dev.request(0x0000, feature.bytes(2))
             flags = 0 if flags is None else ord(flags[1:2])
-            flags = common.flag_names(hidpp20_constants.FeatureFlag, flags)
+            flags = hidpp20_constants.FeatureFlag.flag_names(flags)
             version = dev.features.get_feature_version(int(feature))
             version = version if version else 0
             print("        %2d: %-22s {%04X} V%s    %s " % (index, feature, feature, version, ", ".join(flags)))

@@ -243,7 +243,7 @@ class ReprogrammableKeyV4(ReprogrammableKey):
 
     @property
     def group_mask(self) -> Generator[str]:
-        return common.flag_names(special_keys.CIDGroupBit, self._gmask)
+        return special_keys.KEY_FLAG.flag_names(self._flags)
 
     @property
     def mapped_to(self) -> NamedInt:
@@ -269,7 +269,7 @@ class ReprogrammableKeyV4(ReprogrammableKey):
         return ret
 
     @property
-    def mapping_flags(self) -> List[str]:
+    def mapping_flags(self) -> Generator[str]:
         if self._mapping_flags is None:
             self._getCidReporting()
         return special_keys.MAPPING_FLAG.flag_names(self._mapping_flags)

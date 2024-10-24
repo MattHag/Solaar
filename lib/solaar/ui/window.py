@@ -20,6 +20,7 @@ import logging
 import gi
 
 from gi.repository.GObject import TYPE_PYOBJECT
+from logitech_receiver import common
 from logitech_receiver import hidpp10_constants
 from logitech_receiver.common import LOGITECH_VENDOR_ID
 from logitech_receiver.common import NamedInt
@@ -538,9 +539,10 @@ def _update_details(button):
 
             flag_bits = device.notification_flags
             if flag_bits is not None:
-                flag_names = (
-                    (f"({_('none')})",) if flag_bits == 0 else hidpp10_constants.NOTIFICATION_FLAG.flag_names(flag_bits)
-                )
+                if flag_bits == 0:
+                    flag_names = (f"({_('none')})",)
+                else:
+                    flag_names = common.flag_names(hidpp10_constants.NotificationFlag, flag_bits)
                 yield _("Notifications"), f"\n{' ':15}".join(flag_names)
 
         def _set_details(text):

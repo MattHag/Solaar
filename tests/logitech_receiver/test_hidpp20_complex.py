@@ -192,7 +192,7 @@ def test_ReprogrammableKey_key(device, index, cid, tid, flags, default_task, fla
         ),
     ],
 )
-def test_reprogrammable_key_v4_key(device, index, cid, tid, flags, pos, group, gmask, default_task, flag_names, group_names):
+def test_reprogrammable_keyv4_key(device, index, cid, tid, flags, pos, group, gmask, default_task, flag_names, group_names):
     key = hidpp20.ReprogrammableKeyV4(device, index, cid, tid, flags, pos, group, gmask)
 
     assert key._device == device
@@ -241,7 +241,7 @@ def test_ReprogrammableKeyV4_query(responses, index, mapped_to, remappable_to, m
         (fake_hidpp.responses_key, 4, False, False, False, 0x50, ["0056020000", "0056080000", "0056200000", "0056000050"]),
     ],
 )
-def test_ReprogrammableKeyV4_set(responses, index, diverted, persistently_diverted, rawXY_reporting, remap, sets, mocker):
+def test_reprogrammable_key_v4_set(responses, index, diverted, persistently_diverted, rawXY_reporting, remap, sets, mocker):
     responses += [fake_hidpp.Response(r, 0x530, r) for r in sets]
     device = fake_hidpp.Device(
         "KEY", responses=responses, feature=hidpp20_constants.SupportedFeature.REPROG_CONTROLS_V4, offset=5

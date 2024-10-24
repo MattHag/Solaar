@@ -55,6 +55,7 @@ POWER_SWITCH_LOCATION = NamedInts(
     bottom_edge=0x0C,
 )
 
+
 # Some flags are used both by devices and receivers. The Logitech documentation
 # mentions that the first and last (third) byte are used for devices while the
 # second is used for the receiver. In practise, the second byte is also used for
@@ -68,24 +69,24 @@ POWER_SWITCH_LOCATION = NamedInts(
 # In the future would be useful to have separate enums for receiver and device notification flags,
 # but right now we don't know enough.
 # additional flags taken from https://drive.google.com/file/d/0BxbRzx7vEV7eNDBheWY0UHM5dEU/view?usp=sharing
-NOTIFICATION_FLAG = NamedInts(
-    numpad_numerical_keys=0x800000,
-    f_lock_status=0x400000,
-    roller_H=0x200000,
-    battery_status=0x100000,  # send battery charge notifications (0x07 or 0x0D)
-    mouse_extra_buttons=0x080000,
-    roller_V=0x040000,
-    power_keys=0x020000,  # system control keys such as Sleep
-    keyboard_multimedia_raw=0x010000,  # consumer controls such as Mute and Calculator
-    multi_touch=0x001000,  # notify on multi-touch changes
-    software_present=0x000800,  # software is controlling part of device behaviour
-    link_quality=0x000400,  # notify on link quality changes
-    ui=0x000200,  # notify on UI changes
-    wireless=0x000100,  # notify when the device wireless goes on/off-line
-    configuration_complete=0x000004,
-    voip_telephony=0x000002,
-    threed_gesture=0x000001,
-)
+class NotificationFlag(IntEnum):
+    NUMPAD_NUMERICAL_KEYS = 0x800000
+    F_LOCK_STATUS = 0x400000
+    ROLLER_H = 0x200000
+    BATTERY_STATUS = 0x100000  # send battery charge notifications (0x07 or 0x0D)
+    MOUSE_EXTRA_BUTTONS = 0x080000
+    ROLLER_V = 0x040000
+    POWER_KEYS = 0x020000  # system control keys such as Sleep
+    KEYBOARD_MULTIMEDIA_RAW = 0x010000  # consumer controls such as Mute and Calculator
+    MULTI_TOUCH = 0x001000  # notify on multi-touch changes
+    SOFTWARE_PRESENT = 0x000800  # software is controlling part of device behaviour
+    LINK_QUALITY = 0x000400  # notify on link quality changes
+    UI = 0x000200  # notify on UI changes
+    WIRELESS = 0x000100  # notify when the device wireless goes on/off-line
+    CONFIGURATION_COMPLETE = 0x000004
+    VOIP_TELEPHONY = 0x000002
+    THREED_GESTURE = 0x000001
+
 
 ERROR = NamedInts(
     invalid_SubID__command=0x01,

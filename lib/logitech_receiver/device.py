@@ -468,9 +468,9 @@ class Device:
 
         if enable:
             set_flag_bits = (
-                hidpp10_constants.NOTIFICATION_FLAG.battery_status
-                | hidpp10_constants.NOTIFICATION_FLAG.ui
-                | hidpp10_constants.NOTIFICATION_FLAG.configuration_complete
+                hidpp10_constants.NotificationFlag.BATTERY_STATUS
+                | hidpp10_constants.NotificationFlag.UI
+                | hidpp10_constants.NotificationFlag.CONFIGURATION_COMPLETE
             )
         else:
             set_flag_bits = 0
@@ -480,7 +480,10 @@ class Device:
 
         flag_bits = _hidpp10.get_notification_flags(self)
         if logger.isEnabledFor(logging.INFO):
-            flag_names = None if flag_bits is None else tuple(hidpp10_constants.NOTIFICATION_FLAG.flag_names(flag_bits))
+            if flag_bits is None:
+                flag_names = None
+            else:
+                flag_names = tuple(common.flag_names(hidpp10_constants.NotificationFlag, flag_bits))
             logger.info("%s: device notifications %s %s", self, "enabled" if enable else "disabled", flag_names)
         return flag_bits if ok else None
 

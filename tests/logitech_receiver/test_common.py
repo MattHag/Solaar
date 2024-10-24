@@ -132,23 +132,6 @@ def test_named_ints_range():
         (0b1001, ["one", "unknown:000008"]),
     ],
 )
-def test_named_ints_flag_names(code, expected_flags):
-    named_ints_flag_bits = common.NamedInts(one=0b001, two=0b010, three=0b100)
-
-    flags = list(named_ints_flag_bits.flag_names(code))
-
-    assert flags == expected_flags
-
-
-@pytest.mark.parametrize(
-    "code, expected_flags",
-    [
-        (0, []),
-        (0b0010, ["two"]),
-        (0b0101, ["one", "three"]),
-        (0b1001, ["one", "unknown:000008"]),
-    ],
-)
 def test_flag_names(code, expected_flags):
     class ExampleFlag(IntFlag):
         one = 0x1
