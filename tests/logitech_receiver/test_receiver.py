@@ -189,3 +189,19 @@ def test_receiver_factory_no_device(device_info, responses):
 
     with pytest.raises(exceptions.NoSuchDevice):
         r.device_pairing_information(1)
+
+
+def test_extract_serial_number():
+    response = b'\x03\x16\xcc\x9c\xb4\x05\x06"\x00\x00\x00\x00\x00\x00\x00\x00'
+
+    serial_number = receiver.extract_serial(response)
+
+    assert serial_number == "16CC9CB4"
+
+
+def test_extract_max_devices():
+    response = b'\x03\x16\xcc\x9c\xb4\x05\x06"\x00\x00\x00\x00\x00\x00\x00\x00'
+
+    max_devices = receiver.extract_max_devices(response)
+
+    assert max_devices == 6

@@ -80,6 +80,18 @@ class Pairing:
     error: Optional[any] = None
 
 
+def extract_serial(response: bytes) -> str:
+    """Extracts serial number from received response."""
+    serial_number = response[1:5].hex().upper()
+    return serial_number
+
+
+def extract_max_devices(response: bytes) -> int:
+    """Extracts maximum number of supported devices from response."""
+    max_devices = response[6]
+    return int(max_devices)
+
+
 class Receiver:
     """A generic Receiver instance, mostly implementing the interface used on Unifying, Nano, and LightSpeed receivers"
     The paired devices are available through the sequence interface.
@@ -126,9 +138,9 @@ class Receiver:
         # read the receiver information subregister, so we can find out max_devices
         serial_reply = self.read_register(Registers.RECEIVER_INFO, _IR.receiver_information)
         if serial_reply:
-            self.serial = serial_reply[1:5].hex().upper()
-            self.max_devices = serial_reply[6]
-            if self.max_devices <= 0 or self.max_devices > 6:
+            self.serial = extract_serial(serial_reply)
+            self.max_devices = extract_max_devices(serial_reply)
+            if not (1 <= self.max_devices <= 6):
                 self.max_devices = product_info.get("max_devices", 1)
         else:  # handle receivers that don't have a serial number specially (i.e., c534)
             self.serial = None
