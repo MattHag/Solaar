@@ -12,3 +12,8 @@ def fake_receiver():
 @pytest.fixture
 def fake_device():
     yield device.FakeDevice()
+
+
+@pytest.fixture
+def fake_device_init():
+    yield device.FakeDevice

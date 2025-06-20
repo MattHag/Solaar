@@ -644,8 +644,17 @@ device_backlight = fake_hidpp.Device(
 )
 
 
-def test_Backlight():
-    backlight = _hidpp20.get_backlight(device_backlight)
+@pytest.fixture
+def fake_device_with_backlight(fake_device_init):
+    yield fake_device_init(
+        "BACKLIGHT",
+        responses=responses_backlight,
+        feature=hidpp20_constants.SupportedFeature.BACKLIGHT2,
+    )
+
+
+def test_backlight(fake_device_with_backlight):
+    backlight = _hidpp20.get_backlight(fake_device_with_backlight)
     result = backlight.write()
 
     assert backlight
