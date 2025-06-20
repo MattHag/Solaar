@@ -1,24 +1,12 @@
 from unittest import mock
 
 from logitech_receiver.hidpp10_constants import ErrorCode
-from logitech_receiver.hidpp10_constants import Registers
 from solaar.cli.probe import run
 
 
-# Mock receiver class
-class MockReceiver:
-    handle = 1
-    isDevice = False
-
-    def read_register(self, register, *args):
-        return 0 if register == Registers.RECEIVER_INFO else b"\x01\x03"
-
-
-def test_run_register_errors():
+def test_run_register_errors(fake_receiver):
     mock_args = mock.Mock()
     mock_args.receiver = False
-
-    mock_receiver = MockReceiver()
 
     # Define expected addresses to be called in order
     expected_addresses = []
@@ -45,7 +33,7 @@ def test_run_register_errors():
         "solaar.cli.probe._print_receiver", return_value=None
     ):
         # Call the run function with mocked receivers and args (passing real find_receiver function)
-        run([mock_receiver], mock_args, None, None)
+        run([fake_receiver], mock_args, None, None)
 
         # Evaluate that the addresses called match the expected addresses
         assert (
