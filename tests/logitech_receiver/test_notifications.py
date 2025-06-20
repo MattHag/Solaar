@@ -9,8 +9,6 @@ from logitech_receiver.hidpp10_constants import Registers
 from logitech_receiver.hidpp20_constants import SupportedFeature
 from logitech_receiver.receiver import Receiver
 
-from . import fake_hidpp
-
 
 class MockLowLevelInterface:
     def open_path(self, path):
@@ -70,10 +68,8 @@ def test_process_receiver_notification(sub_id, notification_data, expected_error
         (HIDPPNotification(0, 0, sub_id=0x40, address=0, data=b"0x01"), True),
     ],
 )
-def test_process_device_notification(hidpp_notification, expected):
-    device = fake_hidpp.Device()
-
-    result = notifications.process_device_notification(device, hidpp_notification)
+def test_process_device_notification(fake_device, hidpp_notification, expected):
+    result = notifications.process_device_notification(fake_device, hidpp_notification)
 
     assert result == expected
 
@@ -87,10 +83,8 @@ def test_process_device_notification(hidpp_notification, expected):
         (HIDPPNotification(0, 0, sub_id=Notification.RAW_INPUT, address=0, data=b"0x01"), None),
     ],
 )
-def test_process_dj_notification(hidpp_notification, expected):
-    device = fake_hidpp.Device()
-
-    result = notifications._process_dj_notification(device, hidpp_notification)
+def test_process_dj_notification(fake_device, hidpp_notification, expected):
+    result = notifications._process_dj_notification(fake_device, hidpp_notification)
 
     assert result == expected
 
@@ -103,10 +97,8 @@ def test_process_dj_notification(hidpp_notification, expected):
         (HIDPPNotification(0, 0, sub_id=Notification.RAW_INPUT, address=0, data=b"0x01"), None),
     ],
 )
-def test_process_hidpp10_custom_notification(hidpp_notification, expected):
-    device = fake_hidpp.Device()
-
-    result = notifications._process_hidpp10_custom_notification(device, hidpp_notification)
+def test_process_hidpp10_custom_notification(fake_device, hidpp_notification, expected):
+    result = notifications._process_hidpp10_custom_notification(fake_device, hidpp_notification)
 
     assert result == expected
 
@@ -126,8 +118,7 @@ def test_process_hidpp10_custom_notification(hidpp_notification, expected):
         (HIDPPNotification(0, 0, sub_id=Notification.PAIRING_LOCK, address=0x01, data=b"0x01"), None),
     ],
 )
-def test_process_hidpp10_notification(hidpp_notification, expected):
-    fake_device = fake_hidpp.Device()
+def test_process_hidpp10_notification(fake_device, hidpp_notification, expected):
     fake_device.receiver = ["rec1", "rec2"]
 
     result = notifications._process_hidpp10_notification(fake_device, hidpp_notification)
@@ -270,8 +261,7 @@ def test_process_hidpp10_notification(hidpp_notification, expected):
         ),
     ],
 )
-def test_process_feature_notification(mocker, hidpp_notification, feature):
-    fake_device = fake_hidpp.Device()
+def test_process_feature_notification(fake_device, hidpp_notification, feature):
     fake_device.receiver = ["rec1", "rec2"]
 
     result = notifications._process_feature_notification(fake_device, hidpp_notification)
