@@ -541,16 +541,17 @@ def test_gesture(device, low, high, next_index, next_diversion_index, name, cbe,
 
 
 @pytest.mark.parametrize(
-    "responses, gest, enabled, diverted, set_result, unset_result, divert_result, undivert_result",
+    "gest, enabled, diverted, set_result, unset_result, divert_result, undivert_result",
     [
-        (fake_hidpp.responses_gestures, 20, None, None, None, None, None, None),
-        (fake_hidpp.responses_gestures, 1, True, False, "01", "00", "01", "00"),
-        (fake_hidpp.responses_gestures, 45, False, None, "01", "00", None, None),
+        (20, None, None, None, None, None, None),
+        (1, True, False, "01", "00", "01", "00"),
+        (45, False, None, "01", "00", None, None),
     ],
 )
-def test_Gesture_set(responses, gest, enabled, diverted, set_result, unset_result, divert_result, undivert_result):
-    device = fake_hidpp.Device("GESTURE", responses=responses, feature=hidpp20_constants.SupportedFeature.GESTURE_2)
-    gestures = _hidpp20.get_gestures(device)
+def test_gesture_set(
+    fake_device_with_gesture_support, gest, enabled, diverted, set_result, unset_result, divert_result, undivert_result
+):
+    gestures = _hidpp20.get_gestures(fake_device_with_gesture_support)
 
     gesture = gestures.gesture(gest)
 
@@ -563,14 +564,13 @@ def test_Gesture_set(responses, gest, enabled, diverted, set_result, unset_resul
 
 
 @pytest.mark.parametrize(
-    "responses, prm, id, index, size, value, default_value, write1, write2",
+    "prm, id, index, size, value, default_value, write1, write2",
     [
-        (fake_hidpp.responses_gestures, 4, hidpp20_constants.ParamId.SCALE_FACTOR, 0, 2, 256, 256, "0080", "0180"),
+        (4, hidpp20_constants.ParamId.SCALE_FACTOR, 0, 2, 256, 256, "0080", "0180"),
     ],
 )
-def test_param(responses, prm, id, index, size, value, default_value, write1, write2):
-    device = fake_hidpp.Device("GESTURE", responses=responses, feature=hidpp20_constants.SupportedFeature.GESTURE_2)
-    gestures = _hidpp20.get_gestures(device)
+def test_param(fake_device_with_gesture_support, prm, id, index, size, value, default_value, write1, write2):
+    gestures = _hidpp20.get_gestures(fake_device_with_gesture_support)
 
     param = gestures.param(prm)
 
@@ -586,16 +586,15 @@ def test_param(responses, prm, id, index, size, value, default_value, write1, wr
 
 
 @pytest.mark.parametrize(
-    "responses, id, s, byte_count, expected_value, expected_string",
+    "id, s, byte_count, expected_value, expected_string",
     [
-        (fake_hidpp.responses_gestures, 1, hidpp20.SpecGesture.DVI_FIELD_WIDTH, 1, 8, "[dvi field width=8]"),
-        (fake_hidpp.responses_gestures, 2, hidpp20.SpecGesture.FIELD_WIDTHS, 1, 8, "[field widths=8]"),
-        (fake_hidpp.responses_gestures, 3, hidpp20.SpecGesture.PERIOD_UNIT, 2, 2048, "[period unit=2048]"),
+        (1, hidpp20.SpecGesture.DVI_FIELD_WIDTH, 1, 8, "[dvi field width=8]"),
+        (2, hidpp20.SpecGesture.FIELD_WIDTHS, 1, 8, "[field widths=8]"),
+        (3, hidpp20.SpecGesture.PERIOD_UNIT, 2, 2048, "[period unit=2048]"),
     ],
 )
-def test_spec(responses, id, s, byte_count, expected_value, expected_string):
-    device = fake_hidpp.Device("GESTURE", responses=responses, feature=hidpp20_constants.SupportedFeature.GESTURE_2)
-    gestures = _hidpp20.get_gestures(device)
+def test_spec(fake_device_with_gesture_support, id, s, byte_count, expected_value, expected_string):
+    gestures = _hidpp20.get_gestures(fake_device_with_gesture_support)
 
     spec = gestures.specs[id]
 
@@ -606,11 +605,8 @@ def test_spec(responses, id, s, byte_count, expected_value, expected_string):
     assert repr(spec) == expected_string
 
 
-def test_Gestures():
-    device = fake_hidpp.Device(
-        "GESTURES", responses=fake_hidpp.responses_gestures, feature=hidpp20_constants.SupportedFeature.GESTURE_2
-    )
-    gestures = _hidpp20.get_gestures(device)
+def test_gestures(fake_device_with_gesture_support):
+    gestures = _hidpp20.get_gestures(fake_device_with_gesture_support)
 
     assert gestures
 
